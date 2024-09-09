@@ -1,6 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
+
+#define ALPHABET_SIZE 26
 
 
 int main() {
@@ -57,4 +60,38 @@ int main() {
     fclose(output_fp);
 
     return 0;
+}
+void encrypt(FILE *input, FILE *output, int a, int b) {
+    int ch;
+    while ((ch = fgetc(input)) != EOF) {
+        if (isalpha(ch)) {
+            char base = isupper(ch) ? 'A' : 'a';
+            ch = ((a * (ch - base) + b) % ALPHABET_SIZE + ALPHABET_SIZE) % ALPHABET_SIZE;
+            fputc(ch + base, output);
+        } else {
+            fputc(ch, output);
+        }
+    }
+}
+
+void decrypt(FILE *input, FILE *output, int a, int b) {
+    int a_inv = mod_inverse(a, ALPHABET_SIZE);
+    int ch;
+    while ((ch = fgetc(input)) != EOF) {
+        if (isalpha(ch)) {
+            char base = isupper(ch) ? 'A' : 'a';
+            ch = ((a_inv * ((ch - base - b + ALPHABET_SIZE) % ALPHABET_SIZE)) % ALPHABET_SIZE + ALPHABET_SIZE) % ALPHABET_SIZE;
+            fputc(ch + base, output);
+        } else {
+            fputc(ch, output);
+        }
+    }
+}
+
+int mod_inverse(int a, int m) {
+    a = a % m;
+    for (int x = 1; x < m; x++)
+        if ((a * x) % m == 1)
+            return x;
+    return 1;
 }
