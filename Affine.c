@@ -61,6 +61,7 @@ int main() {
 
     return 0;
 }
+
 void encrypt(FILE *input, FILE *output, int a, int b) {
     int ch;
     while ((ch = fgetc(input)) != EOF) {
